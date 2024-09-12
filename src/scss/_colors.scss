@@ -21,7 +21,7 @@ $theme: mat.define-theme(
 $primary: mat.get-theme-color($theme, primary, 50);
 $secondary: mat.get-theme-color($theme, secondary, 50);
 $tertiary: mat.get-theme-color($theme, tertiary, 50);
-$background-light: mat.get-theme-color($theme, primary, 10);
+$background-light: mat.get-theme-color($theme, neutral, 10);
 $background-dark: mat.get-theme-color($theme, neutral, 6);
 $text: mat.get-theme-color($theme, neutral, 80);
 
