@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
@@ -18,6 +18,7 @@ import { FilterFormEmitterService } from '../../services/filter-form-emitter.ser
   templateUrl: './tablePage.component.html',
   styleUrl: './tablePage.component.scss',
   providers: [FilterFormEmitterService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TablePageComponent {
 

@@ -1,4 +1,6 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule
@@ -25,7 +27,8 @@ type FilterForm = FormGroup<{ filter: FormControl<string> }>;
     MatFabButton,
   ],
   templateUrl: './periodic-table-filter.component.html',
-  styleUrl: './periodic-table-filter.component.scss'
+  styleUrl: './periodic-table-filter.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PeriodicTableFilterComponent implements OnInit {
   constructor(
