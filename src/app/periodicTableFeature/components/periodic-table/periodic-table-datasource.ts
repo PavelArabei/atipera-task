@@ -1,7 +1,7 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatSort } from '@angular/material/sort';
 import {
-  merge, Observable, of as observableOf, Subscription
+  merge, Observable, of as observableOf, Subject, Subscription
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -13,6 +13,12 @@ export interface PeriodicTableItem {
 }
 
 export type PeriodicTableColumnNames = keyof PeriodicTableItem;
+
+interface Filter {
+  filterWord$: Observable<string>;
+  filteredWord: string ;
+  filterSub:Subscription;
+}
 
 const EXAMPLE_DATA: PeriodicTableItem[] = [
   {
@@ -56,28 +62,26 @@ export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
   data: PeriodicTableItem[] = EXAMPLE_DATA;
   sort: MatSort | undefined;
 
-  filterWord$: Observable<string>;
-  filteredWord: string = '';
-  filterSub:Subscription;
+  private filter!:Filter;
+
+  private newDataEmitter = new Subject<PeriodicTableItem>();
+  get newData$(): Observable<PeriodicTableItem> {
+    return this.newDataEmitter.asObservable();
+  }
 
   constructor(filterWord$: Observable<string>) {
     super();
-    this.filterWord$ = filterWord$;
-    this.filterSub = this.filterWord$.subscribe((word) => {
-      this.filteredWord = word;
-    });
+    this.createFilterSub(filterWord$);
   }
 
-  /**
-   * Connect this data source to the table. The table will only update when
-   * the returned stream emits new items.
-   * @returns A stream of the items to be rendered.
-   */
   connect(): Observable<PeriodicTableItem[]> {
     if (this.sort) {
-      // Combine everything that affects the rendered data into one update
-      // stream for the data-table to consume.
-      return merge(observableOf(this.data), this.sort.sortChange, this.filterWord$)
+      return merge(
+        observableOf(this.data),
+        this.sort.sortChange,
+        this.filter.filterWord$,
+        this.newData$
+      )
         .pipe(
           map(() => this.filterData()),
           map((filteredData: PeriodicTableItem[]) => this.getSortedData([...filteredData])),
@@ -87,16 +91,19 @@ export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
     throw Error('Please set the sort on the data source before connecting.');
   }
 
-  /**
-   *  Called when the table is being destroyed. Use this function, to clean up
-   * any open connections or free any held resources that were set up during connect.
-   */
-  disconnect(): void {
-    this.filterSub.unsubscribe();
+  public updateData(rowData:PeriodicTableItem): void {
+    this.data = this.data.map((item: PeriodicTableItem) => {
+      if (isElemetChanged(item, rowData)) {
+        return rowData;
+      }
+      return item;
+    });
+
+    this.newDataEmitter.next(rowData);
   }
 
-  filterData(): PeriodicTableItem[] {
-    if (this.filteredWord === '') {
+  private filterData(): PeriodicTableItem[] {
+    if (this.filter.filteredWord === '') {
       return this.data;
     }
 
@@ -106,7 +113,7 @@ export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
 
       keysArray.forEach((key) => {
         const tableField = item[key];
-        if (isIncludesWord(tableField, this.filteredWord)) result = true;
+        if (isIncludesWord(tableField, this.filter.filteredWord)) result = true;
       });
 
       return result;
@@ -130,6 +137,24 @@ export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
       }
     });
   }
+
+  private createFilterSub(filterWord$: Observable<string>) {
+    const filterSub = filterWord$.subscribe((word) => {
+      if (this.filter) {
+        this.filter.filteredWord = word;
+      }
+    });
+
+    this.filter = {
+      filterWord$,
+      filteredWord: '',
+      filterSub
+    };
+  }
+
+  disconnect(): void {
+    this.filter.filterSub.unsubscribe();
+  }
 }
 
 function isIncludesWord(field: string | number, word: string): boolean {
@@ -139,4 +164,11 @@ function isIncludesWord(field: string | number, word: string): boolean {
 
 function compare(a: string | number, b: string | number, isAsc: boolean): number {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
+
+function isElemetChanged(element: PeriodicTableItem, newElement: PeriodicTableItem): boolean {
+  return element.position === newElement.position
+    || element.name === newElement.name
+    || element.weight === newElement.weight
+    || element.symbol === newElement.symbol;
 }
