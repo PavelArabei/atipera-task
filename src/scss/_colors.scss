@@ -21,14 +21,14 @@ $theme: mat.define-theme(
 $primary: mat.get-theme-color($theme, primary, 50);
 $secondary: mat.get-theme-color($theme, secondary, 50);
 $tertiary: mat.get-theme-color($theme, tertiary, 50);
-$background-light: mat.get-theme-color($theme, neutral, 10);
+$background-light: mat.get-theme-color($theme, primary, 10);
 $background-dark: mat.get-theme-color($theme, neutral, 6);
 $text: mat.get-theme-color($theme, neutral, 80);
 
 html {
   @include mat.all-component-themes($theme);
   @include mat.all-component-typographies($theme);
-  font-family: Roboto, 'Comic Sans', sans-serif;
+  font-family: 'Comic Sans', 'Comic Sans', sans-serif;
   color: $text;
   background-color: $background-dark;
 }
