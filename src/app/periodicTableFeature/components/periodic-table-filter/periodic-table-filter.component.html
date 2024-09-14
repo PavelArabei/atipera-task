@@ -1,0 +1,16 @@
+<form class="filter" [formGroup]="filterForm" (ngSubmit)="submitForm()">
+  <mat-form-field class="filter__input-container">
+    <mat-label>Search</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="filterFormControl"
+      placeholder="Ex. Hydrogen" />
+  </mat-form-field>
+  <button
+    class="filter__button"
+    mat-fab
+    aria-label="Search button with a search icon">
+    <mat-icon>search</mat-icon>
+  </button>
+</form>

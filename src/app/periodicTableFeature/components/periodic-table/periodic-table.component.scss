@@ -1,0 +1,10 @@
+@import 'colors';
+
+.full-width-table {
+  width: 100%;
+}
+
+tr.element-row:not(.expanded-row):hover {
+  background: $background-light;
+  cursor: pointer;
+}

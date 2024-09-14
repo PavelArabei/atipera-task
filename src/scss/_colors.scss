@@ -1,0 +1,35 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+$theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$cyan-palette,
+      tertiary: mat.$rose-palette,
+    ),
+    typography: (
+      brand-family: 'Comic Sans',
+      bold-weight: 700,
+    ),
+    density: (
+      scale: -1,
+    ),
+  )
+);
+
+$primary: mat.get-theme-color($theme, primary, 50);
+$primary-contrast: mat.get-theme-color($theme, primary, 20);
+$secondary: mat.get-theme-color($theme, secondary, 50);
+$tertiary: mat.get-theme-color($theme, tertiary, 50);
+$background-light: mat.get-theme-color($theme, primary, 10);
+$background-dark: mat.get-theme-color($theme, neutral, 6);
+$text: mat.get-theme-color($theme, neutral, 80);
+
+html {
+  @include mat.all-component-themes($theme);
+  @include mat.all-component-typographies($theme);
+  font-family: 'Comic Sans', 'Comic Sans', sans-serif;
+  color: $text;
+  background-color: $background-dark;
+}
