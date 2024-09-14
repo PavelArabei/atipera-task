@@ -53,11 +53,6 @@ const EXAMPLE_DATA: PeriodicTableItem[] = [
   },
 ];
 
-/**
- * Data source for the PeriodicTable view. This class should
- * encapsulate all logic for fetching and manipulating the displayed data
- * (including sorting, pagination, and filtering).
- */
 export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
   data: PeriodicTableItem[] = EXAMPLE_DATA;
   sort: MatSort | undefined;
@@ -65,9 +60,7 @@ export class PeriodicTableDataSource extends DataSource<PeriodicTableItem> {
   private filter!:Filter;
 
   private newDataEmitter = new Subject<PeriodicTableItem>();
-  get newData$(): Observable<PeriodicTableItem> {
-    return this.newDataEmitter.asObservable();
-  }
+  private newData$ = this.newDataEmitter.asObservable();
 
   constructor(filterWord$: Observable<string>) {
     super();
