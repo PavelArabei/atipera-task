@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, inject, OnInit
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
-import { HeaderComponent } from './core/footer/header/header.component';
-import { FooterComponent } from './core/header/footer/footer.component';
+import { FooterComponent } from '@core/components/footer/footer.component';
+import { HeaderComponent } from '@core/components/header/header.component';
+import { IconRegisterService } from '@core/services/icon-register.service';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +14,10 @@ import { FooterComponent } from './core/header/footer/footer.component';
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private readonly iconRegisterService = inject(IconRegisterService);
+
+  ngOnInit(): void {
+    this.iconRegisterService.registerIcons();
+  }
+}
