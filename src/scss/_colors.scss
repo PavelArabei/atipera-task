@@ -19,6 +19,7 @@ $theme: mat.define-theme(
 );
 
 $primary: mat.get-theme-color($theme, primary, 50);
+$primary-contrast: mat.get-theme-color($theme, primary, 20);
 $secondary: mat.get-theme-color($theme, secondary, 50);
 $tertiary: mat.get-theme-color($theme, tertiary, 50);
 $background-light: mat.get-theme-color($theme, primary, 10);
