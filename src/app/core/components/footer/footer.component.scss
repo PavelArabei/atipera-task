@@ -1,0 +1,24 @@
+@import 'colors';
+
+ul {
+  list-style-type: none;
+}
+
+.footer {
+  &__list {
+    display: flex;
+    gap: 2rem;
+  }
+
+  &__icon {
+    width: 3rem;
+    height: 3rem;
+    color: $primary;
+    transition: 0.3s;
+
+    &:hover {
+      color: $secondary;
+      transform: scale(1.2);
+    }
+  }
+}
