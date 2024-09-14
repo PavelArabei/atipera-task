@@ -12,9 +12,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTable, MatTableModule } from '@angular/material/table';
+import {
+  EditElementDialogComponent,
+} from '@periodicTableFeature/components/edit-element-dialog/edit-element-dialog.component';
+import { FilterFormEmitterService } from '@periodicTableFeature/services/filter-form-emitter.service';
 
-import { FilterFormEmitterService } from '../../services/filter-form-emitter.service';
-import { EditElementDialogComponent } from '../edit-element-dialog/edit-element-dialog.component';
 import { PeriodicTableColumnNames, PeriodicTableDataSource, PeriodicTableItem } from './periodic-table-datasource';
 
 @Component({
