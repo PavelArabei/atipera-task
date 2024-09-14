@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -8,12 +8,11 @@ import {
 import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { FilterFormEmitterService } from '@periodicTableFeature/services/filter-form-emitter.service';
 import {
   debounceTime, distinctUntilChanged, of, switchMap
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-import { FilterFormEmitterService } from '../../services/filter-form-emitter.service';
 
 type FilterForm = FormGroup<{ filter: FormControl<string> }>;
 
@@ -31,13 +30,11 @@ type FilterForm = FormGroup<{ filter: FormControl<string> }>;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PeriodicTableFilterComponent implements OnInit {
-  constructor(
-    private readonly fb:FormBuilder,
-    private readonly filterFormEmitterService: FilterFormEmitterService,
-    private readonly destroyRef:DestroyRef
-  ) { }
-
+  private readonly fb = inject(FormBuilder);
+  private readonly filterFormEmitterService = inject(FilterFormEmitterService);
+  private readonly destroyRef = inject(DestroyRef);
   protected filterForm!: FilterForm;
+
   ngOnInit(): void {
     this.initForm();
     this.emitFilterChanges();
