@@ -1,13 +1,6 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  OnInit,
-  ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, inject, OnInit, ViewChild
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -15,9 +8,20 @@ import { MatTable, MatTableModule } from '@angular/material/table';
 import {
   EditElementDialogComponent,
 } from '@periodicTableFeature/components/edit-element-dialog/edit-element-dialog.component';
+import {
+  EXAMPLE_DATA,
+  PeriodicTableColumnNames,
+  PeriodicTableItem,
+} from '@periodicTableFeature/const/periodicTableExample';
 import { FilterFormEmitterService } from '@periodicTableFeature/services/filter-form-emitter.service';
+import { updateDataSource } from '@periodicTableFeature/utility/updateDataSource';
+import { rxState } from '@rx-angular/state';
 
-import { PeriodicTableColumnNames, PeriodicTableDataSource, PeriodicTableItem } from './periodic-table-datasource';
+import { PeriodicTableDataSource } from './periodic-table-datasource';
+
+export interface PeriodicTableState {
+  dataSource: PeriodicTableItem[];
+}
 
 @Component({
   selector: 'app-periodic-table',
@@ -28,19 +32,22 @@ import { PeriodicTableColumnNames, PeriodicTableDataSource, PeriodicTableItem } 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PeriodicTableComponent implements OnInit, AfterViewInit {
+  private state = rxState<PeriodicTableState>(({ set }) => {
+    set({ dataSource: EXAMPLE_DATA });
+  });
+  stateDataSource$ = this.state.select(('dataSource'));
+
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<PeriodicTableItem>;
 
   private readonly dialog = inject(MatDialog);
   private readonly filterFormEmitter = inject(FilterFormEmitterService);
 
-  private destroyRef = inject(DestroyRef);
-
   protected readonly displayedColumns:PeriodicTableColumnNames[] = ['position', 'name', 'weight', 'symbol'];
   private dataSource!: PeriodicTableDataSource;
 
   ngOnInit(): void {
-    this.dataSource = new PeriodicTableDataSource(this.filterFormEmitter.filteredWord$);
+    this.dataSource = new PeriodicTableDataSource(this.filterFormEmitter.filteredWord$, this.stateDataSource$);
   }
 
   ngAfterViewInit(): void {
@@ -53,12 +60,11 @@ export class PeriodicTableComponent implements OnInit, AfterViewInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data:PeriodicTableItem | undefined) => {
-        if (data) {
-          this.dataSource.updateData(data);
-        }
-      });
+    const closeDialog = dialogRef.afterClosed();
+    this.state.connect(
+      'dataSource',
+      closeDialog,
+      (state, data) => updateDataSource(state.dataSource, data)
+    );
   }
 }
