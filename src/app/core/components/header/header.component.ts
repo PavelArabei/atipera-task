@@ -1,5 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +8,9 @@ import { Component } from '@angular/core';
     UpperCasePipe,
   ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class HeaderComponent {
   protected readonly title = 'periodic table';
