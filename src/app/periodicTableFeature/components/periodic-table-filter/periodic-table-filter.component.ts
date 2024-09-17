@@ -9,9 +9,7 @@ import { MatFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FilterFormEmitterService } from '@periodicTableFeature/services/filter-form-emitter.service';
-import {
-  debounceTime, distinctUntilChanged, of, switchMap
-} from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 type FilterForm = FormGroup<{ filter: FormControl<string> }>;
@@ -46,17 +44,13 @@ export class PeriodicTableFilterComponent implements OnInit {
     });
   }
 
-  private emitFilterChanges() {
+  private emitFilterChanges(): void {
     this.filterFormControl.valueChanges.pipe(
       debounceTime(2000),
       distinctUntilChanged(),
       map((data) => data.toLowerCase().trim()),
-      switchMap((data) => {
-        this.filterFormEmitterService.updateData(data);
-        return of(data);
-      }),
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe();
+    ).subscribe((data) => this.filterFormEmitterService.updateData(data));
   }
 
   protected submitForm():void {
