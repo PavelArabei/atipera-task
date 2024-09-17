@@ -13,7 +13,7 @@ import {
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PeriodicTableItem } from '@periodicTableFeature/components/periodic-table/periodic-table-datasource';
+import { PeriodicTableItem } from '@periodicTableFeature/const/periodicTableExample';
 
 type Form = FormGroup<FormData>;
 
